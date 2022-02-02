@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "hip-transducer-328819"
-  }
+    "default": "hip-transducer-328819",
+    "prod": "invest-cert"
+  },
+  "targets": {}
 }
