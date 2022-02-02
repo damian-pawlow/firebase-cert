@@ -32,6 +32,7 @@ limitations under the License.
   <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
   <script src="/__/firebase/9.6.4/firebase-app-compat.js"></script>
   <script src="/__/firebase/9.6.4/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.6.4/firebase-firestore-compat.js"></script>
   <script src="/__/firebase/init.js"></script>
 
   <script type="text/javascript">
@@ -104,6 +105,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
           document.getElementById('add-category-button').style.visibility = 'visible';
+          addDoc("crypto",uid,"lol",100);
         } else {
           // User is signed out.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
@@ -121,6 +123,56 @@ limitations under the License.
     window.onload = function() {
       initApp();
     };
+
+    //--firestore
+    
+    var db = firebase.firestore();
+
+    function getDoc(){
+
+      
+      db.collection("test_collection").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+        //console.log(`${doc.id} => ${doc.data()}`);
+        console.log(doc.data());
+        });
+      });
+
+    }
+
+    function addDoc(category,uid,str_,num_){
+      var docRef = db.collection(category).doc(uid);
+
+      docRef.get().then((doc) => {
+          if (doc.exists) {
+              console.log("Document data:", doc.data());
+          } else {
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+              //adding document with uid
+              docRef.set({
+                name: str_,
+                number: num_
+              })
+          .then(() => {
+              console.log("Document successfully written!");
+          })
+          .catch((error) => {
+              console.error("Error writing document: ", error);
+          });
+
+
+          }
+      }).catch((error) => {
+          console.log("Error getting document:", error);
+      });
+     }
+    
+
+
+    
+
+
   </script>
 </head>
 <body>
