@@ -39,7 +39,7 @@ limitations under the License.
   <script src="/__/firebase/init.js"></script>
 
   <script type="text/javascript">
-
+    
     /**
      * Function called when clicking the Login/Logout button.
      */
@@ -51,7 +51,6 @@ limitations under the License.
         
       } else {
         firebase.auth().signOut();
-
       }
       document.getElementById('quickstart-sign-in').disabled = true;
      
@@ -64,11 +63,9 @@ limitations under the License.
      *  - firebase.auth().getRedirectResult(): This promise completes when the user gets back from
      *    the auth redirect flow. It is where you can get the OAuth access token from the IDP.
      */
-    let uid = ""
-
+     var uid = ""
     function initApp() {
       // Result from Redirect auth flow.
-
       firebase.auth().getRedirectResult().then(function(result) {
         if (result.credential) {
           // This gives you a Google Access Token. You can use it to access the Google API.
@@ -77,7 +74,7 @@ limitations under the License.
         } else {
           //document.getElementById('quickstart-oauthtoken').textContent = 'null';
         }
-        // The signed-in user info. 
+        // The signed-in user info.
         var user = result.user;
       }).catch(function(error) {
         // Handle Errors here.
@@ -100,7 +97,6 @@ limitations under the License.
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           // User is signed in.
-       
           var displayName = user.displayName;
           var email = user.email;
           var emailVerified = user.emailVerified;
@@ -109,18 +105,8 @@ limitations under the License.
           uid = user.uid;
           var providerData = user.providerData;
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-          
         } else {
-          var table = document.getElementById("myTable");   
-          var rows = table.rows;
-          var i = rows.length;
-          while (--i) {
-          rows[i].parentNode.removeChild(rows[i]);
-          }
-            uid = "";
-  
-            document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';  
-          
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';       
         }
         document.getElementById('quickstart-sign-in').disabled = false;
       });
@@ -129,9 +115,7 @@ limitations under the License.
     }
 
     window.onload = function() {
-     
       initApp();
-
     };
     
 //-----------end firebase default -------------------
@@ -142,19 +126,16 @@ limitations under the License.
       currentCat = "stocks"
       console.log(currentCat)
       addTableRawFunction(currentCat,uid);
-      
   }
     function setCategoryCrypto(){
       currentCat = "crypto"
       console.log(currentCat)
       addTableRawFunction(currentCat,uid);
-      
   }
     function setCategoryRawMat(){
       currentCat = "raw_materials"
       console.log(currentCat)
       addTableRawFunction(currentCat,uid);
-      
   }
 
 //-----------end-------------------
@@ -164,102 +145,42 @@ limitations under the License.
     let db = firebase.firestore();
 
 //function adding doc into the Firestore
-    function addDoc(buttonId){
+    function addDoc(){
       
-              console.log(buttonId.id)
-              const form = document.getElementById('add_position');   //getting the form
+//-----
+              
+           
               if(currentCat==""){
                     alert('Please choose category')
-              }
+                    }
               else{   
-                
+              
+              const form = document.getElementById('add_position');   //getting the form
               const name = form.elements['name']
               const amount = form.elements['amount']
               const price = form.elements['price']
-              
               let positionName = name.value.toUpperCase();
               let positionAmount = parseFloat(amount.value)
               let positionPrice = parseFloat(price.value)
               let itemsAmountFromDB;
               let priceFromDB;          
-              let totalItems;  
-              let newAveragePrice
+                
 
               let docPositionName = db.collection(currentCat).doc(uid).collection("position").doc(positionName);
-              
+
               docPositionName.get().then((doc) => {
                   if (doc.exists) {
 
                       itemsAmountFromDB = parseFloat(doc.data().amount);
                       priceFromDB = parseFloat(doc.data().price);
 
-                      if(buttonId.id==="buy"){
-                        
-                        totalItems = itemsAmountFromDB + positionAmount
-                        newAveragePrice = ((itemsAmountFromDB*priceFromDB)+(positionAmount*positionPrice))/totalItems
-                      
-                      }
-                      else{
-                        if(itemsAmountFromDB==positionAmount){
-            
-                          if(positionPrice>priceFromDB){
-                            
-                            if (confirm(`You are going to close position ${positionName} with profit. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
-                          }
-                          else if(positionPrice<priceFromDB){
+                      let totalItems = itemsAmountFromDB + positionAmount
+                      let newAvragePrice = ((itemsAmountFromDB*priceFromDB)+(positionAmount*positionPrice))/totalItems
 
-                            if (confirm(`You are going to close position ${positionName} with lost. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
-
-                          }
-                          else{
-                            
-                            if (confirm(`You are going to close position ${positionName} with no profit or lost. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
-                          }                          
-                        }
-                        
-                        else{
-                          
-                          totalItems = itemsAmountFromDB - positionAmount
-                          newAveragePrice = ((itemsAmountFromDB*priceFromDB)-(positionAmount*positionPrice))/(totalItems)  
-                        
-                        }
-
-                        
-                      }  
                       docPositionName.set({
                           
                           amount: totalItems,
-                          price: newAveragePrice
+                          price: newAvragePrice
   
                         })
                         .then(() => {
@@ -269,13 +190,9 @@ limitations under the License.
                         .catch((error) => {
                             console.error("Error writing document: ", error);
                         });
-                        
+
                   } else {
-                  
-                      if(buttonId.id==="sell"){
-                          alert("no such position")
-                      }
-                      else{
+                      // doc.data() will be undefined in this case
                       console.log("No such document!");
                       docPositionName.set({
                           
@@ -291,11 +208,9 @@ limitations under the License.
                           console.error("Error writing document: ", error);
                       });
                   }
-                }
               }).catch((error) => {
                   console.log("Error getting document:", error);
-              }); 
-              form.reset();                                    
+              });                                   
             }
             
           }
@@ -305,14 +220,13 @@ limitations under the License.
 
       var table = document.getElementById("myTable");  
       
-     function clearTable(table) {
-        var rows = table.rows;
-        var i = rows.length;
-        while (--i) {
+      function clearTable(table) {
+      var rows = table.rows;
+      var i = rows.length;
+      while (--i) {
           rows[i].parentNode.removeChild(rows[i]);
-        }
+          }
       }
-
       clearTable(table);                
       let db = firebase.firestore();
       db.collection(currentCat_).doc(uid_).collection("position")
@@ -369,6 +283,9 @@ limitations under the License.
       </div>
        <!-- Button that handles sign-in/sign-out -->
        <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>
+       
+     
+       <button class="imageBackground" id="imageBackground" onclick="addBackgroundButton()">click to choose your image</button>
       
       </div>
   </header>
@@ -400,13 +317,12 @@ limitations under the License.
       <small></small>
     </div>
     <div class="field">
-      <label for="price">Price per item:</label>
+      <label for="price">Price:</label>
       <input type="text" id="price" name="price" placeholder="Enter the price" />
       <small></small>
     </div>
     <p>
-     <br><br><button type="button" id="buy" onclick="addDoc(this)">BUY</button>
-     <br><br><button type="button" id="sell" onclick="addDoc(this)">SELL</button>
+     <br><br><button type="button" onclick="addDoc()">submit</button>
     </p>  
   </form>
 <!--               positions table             -->
@@ -421,6 +337,9 @@ limitations under the License.
     </tr>
   </table>
 </div>
+<button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>
+
+
 
 </div>
 
