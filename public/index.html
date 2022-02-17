@@ -22,10 +22,12 @@ limitations under the License.
 
   <!-- Material Design Theming -->
   
- 
+  
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
   <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+ 
   <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 
   
@@ -33,9 +35,10 @@ limitations under the License.
   <!-- Import and configure the Firebase SDK -->
   <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
   <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-  <script src="/__/firebase/9.6.4/firebase-app-compat.js"></script>
-  <script src="/__/firebase/9.6.4/firebase-auth-compat.js"></script>
-  <script src="/__/firebase/9.6.4/firebase-firestore-compat.js"></script>
+  <script src="/__/firebase/9.6.6/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.6.6/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.6.6/firebase-firestore-compat.js"></script>
+  <script src="/__/firebase/9.6.6/firebase-storage-compat.js"></script>
   <script src="/__/firebase/init.js"></script>
 
   <script type="text/javascript">
@@ -109,13 +112,41 @@ limitations under the License.
           uid = user.uid;
           var providerData = user.providerData;
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-          
+
+          //upload file
+          let storageRef = firebase.storage().ref();
+          const fileSelector = document.getElementById('fileButton');
+       
+            fileSelector.addEventListener('change', (event) => {
+              const fileList = event.target.files;
+              const file = fileList[0];
+              console.log(fileList);
+
+
+              var storageRef = firebase.storage().ref('img/'+uid);
+              var task = storageRef.put(file);
+              task.on('state_changed', function progress(snapshot) {
+                var percentage = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+
+              }, function error(err) {
+
+              },function complete() {
+                setImage();
+                document.getElementById("fileButton").value=null; 
+              });
+            });
+            setImage();
         } else {
+          var img = document.getElementById('picture_div');
+          img.style.display = "none";
+          var fileButton = document.getElementById('fileButton');
+          fileButton.style.display = "none";
           var table = document.getElementById("myTable");   
           var rows = table.rows;
           var i = rows.length;
           while (--i) {
           rows[i].parentNode.removeChild(rows[i]);
+          
           }
             uid = "";
   
@@ -135,7 +166,23 @@ limitations under the License.
     };
     
 //-----------end firebase default -------------------
-    
+
+function setImage(){
+//const path = "img"+uid;  
+//console.log(path);
+var storage = firebase.storage();
+storageRef = storage.ref('img/'+uid).getDownloadURL()
+  .then((url) => {
+    // `url` is the download URL for 'images/stars.jpg'
+    // Or inserted into an <img> element
+    console.log(url)
+    var img = document.getElementById('picture_div');
+    img.style.backgroundImage = `url('${url}')`
+  })
+  .catch((error) => {
+    // Handle any errors
+  });
+}    
     //setting the current category
     let currentCat = "" 
     function setCategoryStocks(){
@@ -159,10 +206,11 @@ limitations under the License.
 
 //-----------end-------------------
  
-//---------firestore---------------
     
     let db = firebase.firestore();
-
+    
+    
+//---------firestore---------------    
 //function adding doc into the Firestore
     function addDoc(buttonId){
       
@@ -246,7 +294,9 @@ limitations under the License.
                             }
                           }                          
                         }
-                        
+                          else if(positionAmount>itemsAmountFromDB){
+                            alert("You don't have enough items in position")
+                          }
                         else{
                           
                           totalItems = itemsAmountFromDB - positionAmount
@@ -355,7 +405,6 @@ limitations under the License.
 
       }
 
-
   </script>
 </head>
 <body>
@@ -366,10 +415,12 @@ limitations under the License.
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
       <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
         <a href="/"><h3>Investor's calculator</h3></a>
+        <br>
+        <div id="picture_div" style="height:0;width:20%;padding-bottom:20%;position: relative; left: 10%; background-size: cover;"></div>
       </div>
        <!-- Button that handles sign-in/sign-out -->
        <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>
-      
+       <input type="file" id="fileButton" name="fileButton">
       </div>
   </header>
 

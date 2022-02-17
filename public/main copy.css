@@ -92,12 +92,8 @@ li a {
   text-decoration: underline;
   color: #0288d1;
 }
-.mdl-card {
-  overflow: visible;
-}
-.grecaptcha-logo {
-  background-color: white;
-}
+
+
 .mdl-grid {
   max-width: 1024px;
   margin: auto;

@@ -24,9 +24,11 @@ html, body {
   width: 33.3%;
 }
 .row{
-  margin: auto;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
   width: 75%;
-  
   padding: 10px;
 }
 /* Clear floats after the columns */
@@ -48,7 +50,6 @@ html, body {
   transition-duration: 0.4s;
   
 }
-
 
 
 .table{
@@ -75,7 +76,10 @@ tr:nth-child(even) {
 }
 
 .add_position {
-  margin: auto;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
   width: 75%;
   
   padding: 10px;
@@ -92,7 +96,6 @@ li a {
   text-decoration: underline;
   color: #0288d1;
 }
-
 
 .mdl-grid {
   max-width: 1024px;
