@@ -15,22 +15,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <html>
+
 <head>
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Investor's calculator</title>
 
   <!-- Material Design Theming -->
-  
-  
-  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
 
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
- 
   <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-
-  
 
   <!-- Import and configure the Firebase SDK -->
   <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
@@ -51,13 +47,13 @@ limitations under the License.
         var provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/plus.login');
         firebase.auth().signInWithRedirect(provider);
-        
+
       } else {
         firebase.auth().signOut();
 
       }
       document.getElementById('quickstart-sign-in').disabled = true;
-     
+
     }
 
     /**
@@ -72,7 +68,7 @@ limitations under the License.
     function initApp() {
       // Result from Redirect auth flow.
 
-      firebase.auth().getRedirectResult().then(function(result) {
+      firebase.auth().getRedirectResult().then(function (result) {
         if (result.credential) {
           // This gives you a Google Access Token. You can use it to access the Google API.
           var token = result.credential.accessToken;
@@ -82,7 +78,7 @@ limitations under the License.
         }
         // The signed-in user info. 
         var user = result.user;
-      }).catch(function(error) {
+      }).catch(function (error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -100,10 +96,10 @@ limitations under the License.
       });
 
       // Listening for auth state changes.
-      firebase.auth().onAuthStateChanged(function(user) {
+      firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           // User is signed in.
-       
+
           var displayName = user.displayName;
           var email = user.email;
           var emailVerified = user.emailVerified;
@@ -116,42 +112,42 @@ limitations under the License.
           //upload file
           let storageRef = firebase.storage().ref();
           const fileSelector = document.getElementById('fileButton');
-       
-            fileSelector.addEventListener('change', (event) => {
-              const fileList = event.target.files;
-              const file = fileList[0];
-              console.log(fileList);
+
+          fileSelector.addEventListener('change', (event) => {
+            const fileList = event.target.files;
+            const file = fileList[0];
+            console.log(fileList);
 
 
-              var storageRef = firebase.storage().ref('img/'+uid);
-              var task = storageRef.put(file);
-              task.on('state_changed', function progress(snapshot) {
-                var percentage = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+            var storageRef = firebase.storage().ref('img/' + uid);
+            var task = storageRef.put(file);
+            task.on('state_changed', function progress(snapshot) {
+              var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-              }, function error(err) {
+            }, function error(err) {
 
-              },function complete() {
-                setImage();
-                document.getElementById("fileButton").value=null; 
-              });
+            }, function complete() {
+              setImage();
+              document.getElementById("fileButton").value = null;
             });
-            setImage();
+          });
+          setImage();
         } else {
           var img = document.getElementById('picture_div');
           img.style.display = "none";
           var fileButton = document.getElementById('fileButton');
           fileButton.style.display = "none";
-          var table = document.getElementById("myTable");   
+          var table = document.getElementById("myTable");
           var rows = table.rows;
           var i = rows.length;
           while (--i) {
-          rows[i].parentNode.removeChild(rows[i]);
-          
+            rows[i].parentNode.removeChild(rows[i]);
+
           }
-            uid = "";
-  
-            document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';  
-          
+          uid = "";
+
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';
+
         }
         document.getElementById('quickstart-sign-in').disabled = false;
       });
@@ -159,203 +155,200 @@ limitations under the License.
       document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
     }
 
-    window.onload = function() {
-     
+    window.onload = function () {
+
       initApp();
 
     };
-    
-//-----------end firebase default -------------------
 
-function setImage(){
-//const path = "img"+uid;  
-//console.log(path);
-var storage = firebase.storage();
-storageRef = storage.ref('img/'+uid).getDownloadURL()
-  .then((url) => {
-    // `url` is the download URL for 'images/stars.jpg'
-    // Or inserted into an <img> element
-    console.log(url)
-    var img = document.getElementById('picture_div');
-    img.style.backgroundImage = `url('${url}')`
-  })
-  .catch((error) => {
-    // Handle any errors
-  });
-}    
+    //-----------end firebase default -------------------
+
+    function setImage() {
+      //const path = "img"+uid;  
+      //console.log(path);
+      var storage = firebase.storage();
+      storageRef = storage.ref('img/' + uid).getDownloadURL()
+        .then((url) => {
+          // `url` is the download URL for 'images/stars.jpg'
+          // Or inserted into an <img> element
+          console.log(url)
+          var img = document.getElementById('picture_div');
+          img.style.backgroundImage = `url('${url}')`
+        })
+        .catch((error) => {
+          // Handle any errors
+        });
+    }
     //setting the current category
-    let currentCat = "" 
-    function setCategoryStocks(){
+    let currentCat = ""
+    function setCategoryStocks() {
       currentCat = "stocks"
       console.log(currentCat)
-      addTableRawFunction(currentCat,uid);
-      
-  }
-    function setCategoryCrypto(){
+      addTableRawFunction(currentCat, uid);
+
+    }
+    function setCategoryCrypto() {
       currentCat = "crypto"
       console.log(currentCat)
-      addTableRawFunction(currentCat,uid);
-      
-  }
-    function setCategoryRawMat(){
+      addTableRawFunction(currentCat, uid);
+
+    }
+    function setCategoryRawMat() {
       currentCat = "raw_materials"
       console.log(currentCat)
-      addTableRawFunction(currentCat,uid);
-      
-  }
+      addTableRawFunction(currentCat, uid);
 
-//-----------end-------------------
- 
-    
+    }
+
     let db = firebase.firestore();
-    
-    
-//---------firestore---------------    
-//function adding doc into the Firestore
-    function addDoc(buttonId){
-      
-              console.log(buttonId.id)
-              const form = document.getElementById('add_position');   //getting the form
-              if(currentCat==""){
-                    alert('Please choose category')
-              }
-              else{   
-                
-              const name = form.elements['name']
-              const amount = form.elements['amount']
-              const price = form.elements['price']
-              
-              let positionName = name.value.toUpperCase();
-              let positionAmount = parseFloat(amount.value)
-              let positionPrice = parseFloat(price.value)
-              let itemsAmountFromDB;
-              let priceFromDB;          
-              let totalItems;  
-              let newAveragePrice
 
-              let docPositionName = db.collection(currentCat).doc(uid).collection("position").doc(positionName);
-              
-              docPositionName.get().then((doc) => {
-                  if (doc.exists) {
 
-                      itemsAmountFromDB = parseFloat(doc.data().amount);
-                      priceFromDB = parseFloat(doc.data().price);
+    //---------firestore---------------    
+    //function adding doc into the Firestore
+    function addDoc(buttonId) {
 
-                      if(buttonId.id==="buy"){
-                        
-                        totalItems = itemsAmountFromDB + positionAmount
-                        newAveragePrice = ((itemsAmountFromDB*priceFromDB)+(positionAmount*positionPrice))/totalItems
-                      
-                      }
-                      else{
-                        if(itemsAmountFromDB==positionAmount){
-            
-                          if(positionPrice>priceFromDB){
-                            
-                            if (confirm(`You are going to close position ${positionName} with profit. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
-                          }
-                          else if(positionPrice<priceFromDB){
+      console.log(buttonId.id)
+      const form = document.getElementById('add_position');   //getting the form
+      if (currentCat == "") {
+        alert('Please choose category')
+      }
+      else {
 
-                            if (confirm(`You are going to close position ${positionName} with lost. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
+        const name = form.elements['name']
+        const amount = form.elements['amount']
+        const price = form.elements['price']
 
-                          }
-                          else{
-                            
-                            if (confirm(`You are going to close position ${positionName} with no profit or lost. Are you sure?`)) {
-                                    docPositionName.delete().then(() => {
-                                    console.log("Document successfully deleted!");  
-                                    addTableRawFunction(currentCat,uid); 
-                                    }).catch((error) => {
-                                        console.error("Error removing document: ", error);
-                                    });
-                            } else {
-                              // Do nothing!
-                              console.log('Thing was not saved to the database.');
-                            }
-                          }                          
-                        }
-                          else if(positionAmount>itemsAmountFromDB){
-                            alert("You don't have enough items in position")
-                          }
-                        else{
-                          
-                          totalItems = itemsAmountFromDB - positionAmount
-                          newAveragePrice = ((itemsAmountFromDB*priceFromDB)-(positionAmount*positionPrice))/(totalItems)  
-                        
-                        }
+        let positionName = name.value.toUpperCase();
+        let positionAmount = parseFloat(amount.value)
+        let positionPrice = parseFloat(price.value)
+        let itemsAmountFromDB;
+        let priceFromDB;
+        let totalItems;
+        let newAveragePrice
 
-                        
-                      }  
-                      docPositionName.set({
-                          
-                          amount: totalItems,
-                          price: newAveragePrice
-  
-                        })
-                        .then(() => {
-                            console.log("Document successfully written!");
-                            addTableRawFunction(currentCat,uid) 
-                        })
-                        .catch((error) => {
-                            console.error("Error writing document: ", error);
-                        });
-                        
+        let docPositionName = db.collection(currentCat).doc(uid).collection("position").doc(positionName);
+
+        docPositionName.get().then((doc) => {
+          if (doc.exists) {
+
+            itemsAmountFromDB = parseFloat(doc.data().amount);
+            priceFromDB = parseFloat(doc.data().price);
+
+            if (buttonId.id === "buy") {
+
+              totalItems = itemsAmountFromDB + positionAmount
+              newAveragePrice = ((itemsAmountFromDB * priceFromDB) + (positionAmount * positionPrice)) / totalItems
+
+            }
+            else {
+              if (itemsAmountFromDB == positionAmount) {
+
+                if (positionPrice > priceFromDB) {
+
+                  if (confirm(`You are going to close position ${positionName} with profit. Are you sure?`)) {
+                    docPositionName.delete().then(() => {
+                      console.log("Document successfully deleted!");
+                      addTableRawFunction(currentCat, uid);
+                    }).catch((error) => {
+                      console.error("Error removing document: ", error);
+                    });
                   } else {
-                  
-                      if(buttonId.id==="sell"){
-                          alert("no such position")
-                      }
-                      else{
-                      console.log("No such document!");
-                      docPositionName.set({
-                          
-                        amount: positionAmount,
-                        price: positionPrice
-
-                      })
-                      .then(() => {
-                          console.log("Document successfully written!");
-                          addTableRawFunction(currentCat,uid) 
-                      })
-                      .catch((error) => {
-                          console.error("Error writing document: ", error);
-                      });
+                    // Do nothing!
+                    console.log('Thing was not saved to the database.');
                   }
                 }
-              }).catch((error) => {
-                  console.log("Error getting document:", error);
-              }); 
-              form.reset();                                    
-            }
-            
-          }
-     
-//add values into the table     
-      function addTableRawFunction(currentCat_,uid_) {
+                else if (positionPrice < priceFromDB) {
 
-      var table = document.getElementById("myTable");  
-      
-     function clearTable(table) {
+                  if (confirm(`You are going to close position ${positionName} with lost. Are you sure?`)) {
+                    docPositionName.delete().then(() => {
+                      console.log("Document successfully deleted!");
+                      addTableRawFunction(currentCat, uid);
+                    }).catch((error) => {
+                      console.error("Error removing document: ", error);
+                    });
+                  } else {
+                    // Do nothing!
+                    console.log('Thing was not saved to the database.');
+                  }
+
+                }
+                else {
+
+                  if (confirm(`You are going to close position ${positionName} with no profit or lost. Are you sure?`)) {
+                    docPositionName.delete().then(() => {
+                      console.log("Document successfully deleted!");
+                      addTableRawFunction(currentCat, uid);
+                    }).catch((error) => {
+                      console.error("Error removing document: ", error);
+                    });
+                  } else {
+                    // Do nothing!
+                    console.log('Thing was not saved to the database.');
+                  }
+                }
+              }
+              else if (positionAmount > itemsAmountFromDB) {
+                alert("You don't have enough items in position")
+              }
+              else {
+
+                totalItems = itemsAmountFromDB - positionAmount
+                newAveragePrice = ((itemsAmountFromDB * priceFromDB) - (positionAmount * positionPrice)) / (totalItems)
+
+              }
+
+
+            }
+            docPositionName.set({
+
+              amount: totalItems,
+              price: newAveragePrice
+
+            })
+              .then(() => {
+                console.log("Document successfully written!");
+                addTableRawFunction(currentCat, uid)
+              })
+              .catch((error) => {
+                console.error("Error writing document: ", error);
+              });
+
+          } else {
+
+            if (buttonId.id === "sell") {
+              alert("no such position")
+            }
+            else {
+              console.log("No such document!");
+              docPositionName.set({
+
+                amount: positionAmount,
+                price: positionPrice
+
+              })
+                .then(() => {
+                  console.log("Document successfully written!");
+                  addTableRawFunction(currentCat, uid)
+                })
+                .catch((error) => {
+                  console.error("Error writing document: ", error);
+                });
+            }
+          }
+        }).catch((error) => {
+          console.log("Error getting document:", error);
+        });
+        form.reset();
+      }
+
+    }
+
+    //add values into the table     
+    function addTableRawFunction(currentCat_, uid_) {
+
+      var table = document.getElementById("myTable");
+
+      function clearTable(table) {
         var rows = table.rows;
         var i = rows.length;
         while (--i) {
@@ -363,117 +356,123 @@ storageRef = storage.ref('img/'+uid).getDownloadURL()
         }
       }
 
-      clearTable(table);                
+      clearTable(table);
       let db = firebase.firestore();
       db.collection(currentCat_).doc(uid_).collection("position")
         .get()
         .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
+          querySnapshot.forEach((doc) => {
 
-              var table = document.getElementById("myTable");  
-              var row = table.insertRow(1);
-              var cell1 = row.insertCell(0);
-              var cell2 = row.insertCell(1);
-              var cell3 = row.insertCell(2)
-              cell1.innerHTML = doc.id;
-              if(currentCat_=="crypto" || currentCat_=="raw_materials"){
-                cell2.innerHTML = parseFloat(doc.data().amount).toFixed(8);
-              }
-              else{
-                cell2.innerHTML = parseFloat(doc.data().amount);
-              }
-              
-              cell3.innerHTML = parseFloat(doc.data().price).toFixed(2);
-            });
+            var table = document.getElementById("myTable");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2)
+            cell1.innerHTML = doc.id;
+            if (currentCat_ == "crypto" || currentCat_ == "raw_materials") {
+              cell2.innerHTML = parseFloat(doc.data().amount).toFixed(8);
+            }
+            else {
+              cell2.innerHTML = parseFloat(doc.data().amount);
+            }
+
+            cell3.innerHTML = parseFloat(doc.data().price).toFixed(2);
+          });
         })
         .catch((error) => {
-            console.log("Error getting documents: ", error);
-        }); 
-      }
+          console.log("Error getting documents: ", error);
+        });
+    }
 
-      function myDeleteFunction() {
+    function myDeleteFunction() {
       document.getElementById("myTable").deleteRow(0);
-      }
-      //console.log("array l:",arrOfPositionsNames.length)
+    }
+    //console.log("array l:",arrOfPositionsNames.length)
 
-      //button add background
-      function addBackgroundButton(){
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.click();
+    //button add background
+    function addBackgroundButton() {
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.click();
 
 
-      }
+    }
 
   </script>
 </head>
+
 <body>
-<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
-  <!-- Header section containing title -->
-  <header class="mdl-layout__header mdl-color-text--white mdl-color--teal-300">
-    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
-        <a href="/"><h3>Investor's calculator</h3></a>
-        <br>
-        <div id="picture_div" style="height:0;width:20%;padding-bottom:20%;position: relative; left: 10%; background-size: cover;"></div>
+    <!-- Header section containing title -->
+    <header class="mdl-layout__header mdl-color-text--white mdl-color--teal-300">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+        <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+          <a href="/">
+            <h3>Investor's calculator</h3>
+          </a>
+          <br>
+          <div id="picture_div"
+            style="height:0;width:20%;padding-bottom:20%;position: relative; left: 10%; background-size: cover;"></div>
+        </div>
+        <!-- Button that handles sign-in/sign-out -->
+        <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with
+          Google</button>
+        <input type="file" id="fileButton" name="fileButton">
       </div>
-       <!-- Button that handles sign-in/sign-out -->
-       <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>
-       <input type="file" id="fileButton" name="fileButton">
+    </header>
+
+    <!--              categories                  -->
+    <div class="row">
+      <div class="column" style="background-color:#aaa;">
+        <button class="cat_button" id="catStocks" onclick="setCategoryStocks()">STOCKS</button>
       </div>
-  </header>
-
-<!--              categories                  -->  
-<div class="row">
-  <div class="column" style="background-color:#aaa;">
-    <button class="cat_button" id="catStocks" onclick="setCategoryStocks()">STOCKS</button>
-  </div>
-  <div class="column" style="background-color:#bbb;">
-    <button class="cat_button" id="catCrypto" onclick="setCategoryCrypto()">CRYPTOCURRENCIES</button>
-  </div>
-  <div class="column" style="background-color:#ccc;">
-    <button class="cat_button" id="catRawMat" onclick="setCategoryRawMat()">RAW MATERIALS</button>
-  </div>
-</div>  
-<!--              form                        -->
-
-  <form class="add_position" id="add_position">
-    <h4>Add the position</h4>
-    <div class="field">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" placeholder="Enter the name" />
-      <small></small>
+      <div class="column" style="background-color:#bbb;">
+        <button class="cat_button" id="catCrypto" onclick="setCategoryCrypto()">CRYPTOCURRENCIES</button>
+      </div>
+      <div class="column" style="background-color:#ccc;">
+        <button class="cat_button" id="catRawMat" onclick="setCategoryRawMat()">RAW MATERIALS</button>
+      </div>
     </div>
-    <div class="field">
-      <label for="amount">Amount:</label>
-      <input type="text" id="amount" name="amount" placeholder="Enter the amount" />
-      <small></small>
+    <!--              form                        -->
+
+    <form class="add_position" id="add_position">
+      <h4>Add the position</h4>
+      <div class="field">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter the name" />
+        <small></small>
+      </div>
+      <div class="field">
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount" placeholder="Enter the amount" />
+        <small></small>
+      </div>
+      <div class="field">
+        <label for="price">Price per item:</label>
+        <input type="text" id="price" name="price" placeholder="Enter the price" />
+        <small></small>
+      </div>
+      <p>
+        <br><br><button type="button" id="buy" onclick="addDoc(this)">BUY</button>
+        <br><br><button type="button" id="sell" onclick="addDoc(this)">SELL</button>
+      </p>
+    </form>
+    <!--               positions table             -->
+
+
+    <div class="row">
+      <table id="myTable">
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Average price</th>
+        </tr>
+      </table>
     </div>
-    <div class="field">
-      <label for="price">Price per item:</label>
-      <input type="text" id="price" name="price" placeholder="Enter the price" />
-      <small></small>
-    </div>
-    <p>
-     <br><br><button type="button" id="buy" onclick="addDoc(this)">BUY</button>
-     <br><br><button type="button" id="sell" onclick="addDoc(this)">SELL</button>
-    </p>  
-  </form>
-<!--               positions table             -->
 
-
-<div class="row">
-  <table id="myTable">
-    <tr>
-      <th>Name</th>
-      <th>Amount</th>
-      <th>Average price</th>
-    </tr>
-  </table>
-</div>
-
-</div>
+  </div>
 
 </body>
+
 </html>

@@ -1,3 +1,6 @@
+#rules and json
+*.json
+*.rules
 # Logs
 logs
 *.log
